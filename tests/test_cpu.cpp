@@ -49,7 +49,6 @@ TEST_CASE("LDA opcode works with different addressing modes", "[opcode][lda]")
 	REQUIRE(cpu.a == 0xAB);
 
 	// Absolute X
-	/*
 	program = {
 		0xA2, 0x10,
 		0xBD, 0x30, 0x00,
@@ -58,7 +57,6 @@ TEST_CASE("LDA opcode works with different addressing modes", "[opcode][lda]")
 	bus.write(0x0040, 0xCD); // Set memory at $0030 + X (0x0040) to 0xCD
 	cpu.load_and_run(program);
 	REQUIRE(cpu.a == 0xCD);
-	*/
 }
 
 TEST_CASE("AND opcode works with immediate addressing", "[opcode][and]")
