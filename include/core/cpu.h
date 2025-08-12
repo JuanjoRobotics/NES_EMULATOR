@@ -78,7 +78,7 @@ public:
 	void txs(AddressingMode mode);
 	void tya(AddressingMode mode);
 
-	enum FLAGS6502
+	enum class FLAGS6502
 	{
 		CARRY = (1 << 0),
 		ZERO = (1 << 1),
@@ -97,7 +97,6 @@ public:
 	uint8_t sp = 0x00;	   // Stack Pointer
 	uint8_t status = 0x00; // Status Register
 
-private:
 	Bus *bus = nullptr;
 	uint8_t read(uint16_t address) const;
 	void write(uint16_t address, uint8_t data);
@@ -105,7 +104,7 @@ private:
 	uint16_t read_u16(uint16_t address) const;
 	void write_u16(uint16_t address, uint16_t data);
 
-	uint8_t get_flag(FLAGS6502 flag) const;
+	bool get_flag(FLAGS6502 flag) const;
 	void set_flag(FLAGS6502 flag, bool set);
 
 	uint16_t get_operand_address(AddressingMode mode) const;
@@ -114,5 +113,6 @@ private:
 	void set_zero_flag(uint8_t value);
 	void set_negative_flag(uint8_t value);
 	void set_carry_flag();
+	uint8_t get_carry_flag() const;
 	void clear_carry_flag();
 };
