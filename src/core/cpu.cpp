@@ -4,6 +4,10 @@
 #include "core/cpu.h"
 #include "core/bus.h"
 
+#include "debug.h"
+#include "exception/cpu_exception.h"
+#include "utils/hex.h"
+
 CPU::CPU()
 {
 	a = 0x00;
@@ -21,11 +25,13 @@ CPU::~CPU()
 /* Memory access */
 uint8_t CPU::read(uint16_t address) const
 {
+	DEBUG("Reading address: 0x" << HEX(address));
 	return bus->read(address);
 }
 
 void CPU::write(uint16_t address, uint8_t data)
 {
+	DEBUG("Writing data: 0x" << HEX(data) << " to address: 0x" << HEX(address));
 	bus->write(address, data);
 }
 
@@ -83,6 +89,7 @@ uint16_t CPU::get_operand_address(AddressingMode mode) const
 			std::string("Unsupported or invalid addressing mode in get_operand_address at ") +
 			__FILE__ + ":" + std::to_string(__LINE__));
 	}
+	DEBUG("Operand address for mode " << static_cast<int>(mode) << ": 0x" << HEX(get_operand_address(mode)));
 }
 
 /* Initialization */
@@ -247,9 +254,7 @@ void CPU::run()
 		}
 		else
 		{
-			throw std::runtime_error(
-				std::string("Unsupported or invalid opcode at ") +
-				__FILE__ + ":" + std::to_string(__LINE__));
+			THROW_CPU_EXCEPTION("Unsupported or invalid opcode");
 		}
 
 		// We only increment the program counter if the opcode is not a branch or jump

@@ -2,6 +2,7 @@
 #include "catch_amalgamated.hpp"
 #include "core/cpu.h"
 #include "core/bus.h"
+#include "exception/cpu_exception.h"
 #include <iostream>
 
 TEST_CASE("LDA opcode works with different addressing modes", "[opcode][lda]")
@@ -76,4 +77,19 @@ TEST_CASE("AND opcode works with immediate addressing", "[opcode][and]")
 
 	// The result should be 0x02 (0xF3 & 0x0A)
 	REQUIRE(cpu.a == 0x02);
+}
+
+TEST_CASE("Invalid Opcode should raise an exception", "[opcode][exception]")
+{
+	// Set up CPU and Bus
+	Bus bus;
+	CPU cpu;
+	cpu.connect_bus(&bus);
+
+	std::vector<uint8_t> program = {
+		0xFF // Invalid opcode
+	};
+
+	// Expect an exception to be thrown
+	REQUIRE_THROWS_AS(cpu.load_and_run(program), cpu_exception);
 }
