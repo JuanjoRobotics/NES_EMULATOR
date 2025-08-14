@@ -18,7 +18,7 @@ TEST_CASE("LDA opcode works with immediate addressing", "[opcode][lda][immediate
 	};
 
 	cpu.load_and_run(program);
-	REQUIRE(cpu.a == 0x42);
+	REQUIRE(cpu.get_accumulator() == 0x42);
 }
 
 TEST_CASE("LDA opcode works with zero page addressing", "[opcode][lda][zeropage]")
@@ -34,7 +34,7 @@ TEST_CASE("LDA opcode works with zero page addressing", "[opcode][lda][zeropage]
 
 	bus.write(0x10, 0x15); // Set memory at $10 to 0x15
 	cpu.load_and_run(program);
-	REQUIRE(cpu.a == 0x15);
+	REQUIRE(cpu.get_accumulator() == 0x15);
 }
 
 TEST_CASE("LDA opcode works with absolute addressing", "[opcode][lda][absolute]")
@@ -50,7 +50,7 @@ TEST_CASE("LDA opcode works with absolute addressing", "[opcode][lda][absolute]"
 
 	bus.write(0x0020, 0x99); // Set memory at $0020 to 0x99
 	cpu.load_and_run(program);
-	REQUIRE(cpu.a == 0x99);
+	REQUIRE(cpu.get_accumulator() == 0x99);
 }
 
 TEST_CASE("LDA opcode works with zero page,X addressing", "[opcode][lda][zeropagex]")
@@ -68,7 +68,7 @@ TEST_CASE("LDA opcode works with zero page,X addressing", "[opcode][lda][zeropag
 	bus.write(0x10, 0x10);	 // Set memory at $10 to $10 (so X = $10)
 	bus.write(0x0030, 0xAB); // Set memory at $20 + X (0x30) to 0xAB
 	cpu.load_and_run(program);
-	REQUIRE(cpu.a == 0xAB);
+	REQUIRE(cpu.get_accumulator() == 0xAB);
 }
 
 TEST_CASE("LDA opcode works with absolute,X addressing", "[opcode][lda][absolutex]")
@@ -85,7 +85,7 @@ TEST_CASE("LDA opcode works with absolute,X addressing", "[opcode][lda][absolute
 
 	bus.write(0x0040, 0xCD); // Set memory at $0030 + X (0x0040) to 0xCD
 	cpu.load_and_run(program);
-	REQUIRE(cpu.a == 0xCD);
+	REQUIRE(cpu.get_accumulator() == 0xCD);
 }
 
 /* AND */
@@ -105,7 +105,7 @@ TEST_CASE("AND opcode works with immediate addressing", "[opcode][and][immediate
 	cpu.load_and_run(program);
 
 	// The result should be 0x02 (0xF3 & 0x0A)
-	REQUIRE(cpu.a == 0x02);
+	REQUIRE(cpu.get_accumulator() == 0x02);
 }
 
 TEST_CASE("AND opcode works with zero page addressing", "[opcode][and][zeropage]")
@@ -123,7 +123,7 @@ TEST_CASE("AND opcode works with zero page addressing", "[opcode][and][zeropage]
 
 	cpu.load_and_run(program);
 
-	REQUIRE(cpu.a == 0x02);
+	REQUIRE(cpu.get_accumulator() == 0x02);
 }
 
 TEST_CASE("AND opcode works with zero page,X addressing", "[opcode][and][zeropagex]")
@@ -142,7 +142,7 @@ TEST_CASE("AND opcode works with zero page,X addressing", "[opcode][and][zeropag
 
 	cpu.load_and_run(program);
 
-	REQUIRE(cpu.a == 0x02);
+	REQUIRE(cpu.get_accumulator() == 0x02);
 }
 
 TEST_CASE("AND opcode works with absolute addressing", "[opcode][and][absolute]")
@@ -160,7 +160,7 @@ TEST_CASE("AND opcode works with absolute addressing", "[opcode][and][absolute]"
 
 	cpu.load_and_run(program);
 
-	REQUIRE(cpu.a == 0x02);
+	REQUIRE(cpu.get_accumulator() == 0x02);
 }
 
 TEST_CASE("AND opcode works with absolute,X addressing", "[opcode][and][absolutex]")
@@ -179,7 +179,7 @@ TEST_CASE("AND opcode works with absolute,X addressing", "[opcode][and][absolute
 
 	cpu.load_and_run(program);
 
-	REQUIRE(cpu.a == 0x02);
+	REQUIRE(cpu.get_accumulator() == 0x02);
 }
 
 TEST_CASE("LDY opcode works with immediate addressing", "[opcode][ldy][immediate]")
@@ -194,7 +194,7 @@ TEST_CASE("LDY opcode works with immediate addressing", "[opcode][ldy][immediate
 	};
 
 	cpu.load_and_run(program);
-	REQUIRE(cpu.y == 0x55);
+	REQUIRE(cpu.get_y() == 0x55);
 }
 
 TEST_CASE("LDY opcode works with zero page addressing", "[opcode][ldy][zeropage]")
@@ -210,7 +210,7 @@ TEST_CASE("LDY opcode works with zero page addressing", "[opcode][ldy][zeropage]
 
 	bus.write(0x10, 0x77); // Set memory at $10 to 0x77
 	cpu.load_and_run(program);
-	REQUIRE(cpu.y == 0x77);
+	REQUIRE(cpu.get_y() == 0x77);
 }
 
 TEST_CASE("LDY opcode works with zero page,X addressing", "[opcode][ldy][zeropagex]")
@@ -227,7 +227,7 @@ TEST_CASE("LDY opcode works with zero page,X addressing", "[opcode][ldy][zeropag
 
 	bus.write(0x15, 0x99); // Set memory at $15 to 0x99
 	cpu.load_and_run(program);
-	REQUIRE(cpu.y == 0x99);
+	REQUIRE(cpu.get_y() == 0x99);
 }
 
 TEST_CASE("LDY opcode works with absolute addressing", "[opcode][ldy][absolute]")
@@ -243,7 +243,7 @@ TEST_CASE("LDY opcode works with absolute addressing", "[opcode][ldy][absolute]"
 
 	bus.write(0x1234, 0x88); // Set memory at $1234 to 0x88
 	cpu.load_and_run(program);
-	REQUIRE(cpu.y == 0x88);
+	REQUIRE(cpu.get_y() == 0x88);
 }
 
 TEST_CASE("LDY opcode works with absolute,X addressing", "[opcode][ldy][absolutex]")
@@ -260,7 +260,7 @@ TEST_CASE("LDY opcode works with absolute,X addressing", "[opcode][ldy][absolute
 
 	bus.write(0x1234, 0xAA); // Set memory at $1234 to 0xAA
 	cpu.load_and_run(program);
-	REQUIRE(cpu.y == 0xAA);
+	REQUIRE(cpu.get_y() == 0xAA);
 }
 
 TEST_CASE("ADC opcode works with immediate addressing (no carry, no overflow)", "[opcode][adc][immediate]")
@@ -278,14 +278,14 @@ TEST_CASE("ADC opcode works with immediate addressing (no carry, no overflow)", 
 
 	cpu.load_and_run(program);
 
-	REQUIRE(cpu.a == 0x32); // 0x10 + 0x22 = 0x32
+	REQUIRE(cpu.get_accumulator() == 0x32); // 0x10 + 0x22 = 0x32
 	REQUIRE(cpu.get_flag(CPU::FLAGS6502::CARRY) == false);
 	REQUIRE(cpu.get_flag(CPU::FLAGS6502::ZERO) == false);
-	REQUIRE(cpu.get_flag(CPU::FLAGS6502::SIGN) == false);
+	REQUIRE(cpu.get_flag(CPU::FLAGS6502::NEGATIVE) == false);
 	REQUIRE(cpu.get_flag(CPU::FLAGS6502::OVERFLW) == false);
 }
 
-TEST_CASE("ADC opcode sets carry flag on overflow (unsigned)", "[opcode][adc][immediate][carry]")
+TEST_CASE("ADC opcode sets carry flag on overflow (unNEGATIVEed)", "[opcode][adc][immediate][carry]")
 {
 	Bus bus;
 	CPU cpu;
@@ -300,10 +300,10 @@ TEST_CASE("ADC opcode sets carry flag on overflow (unsigned)", "[opcode][adc][im
 
 	cpu.load_and_run(program);
 
-	REQUIRE(cpu.a == 0x10); // 0xF0 + 0x20 = 0x110 -> 0x10
+	REQUIRE(cpu.get_accumulator() == 0x10); // 0xF0 + 0x20 = 0x110 -> 0x10
 	REQUIRE(cpu.get_flag(CPU::FLAGS6502::CARRY) == true);
 	REQUIRE(cpu.get_flag(CPU::FLAGS6502::ZERO) == false);
-	REQUIRE(cpu.get_flag(CPU::FLAGS6502::SIGN) == false);
+	REQUIRE(cpu.get_flag(CPU::FLAGS6502::NEGATIVE) == false);
 	REQUIRE(cpu.get_flag(CPU::FLAGS6502::OVERFLW) == false);
 }
 
@@ -322,10 +322,10 @@ TEST_CASE("ADC opcode sets zero flag", "[opcode][adc][immediate][zero]")
 
 	cpu.load_and_run(program);
 
-	REQUIRE(cpu.a == 0x00);
+	REQUIRE(cpu.get_accumulator() == 0x00);
 	REQUIRE(cpu.get_flag(CPU::FLAGS6502::ZERO) == true);
 	REQUIRE(cpu.get_flag(CPU::FLAGS6502::CARRY) == false);
-	REQUIRE(cpu.get_flag(CPU::FLAGS6502::SIGN) == false);
+	REQUIRE(cpu.get_flag(CPU::FLAGS6502::NEGATIVE) == false);
 	REQUIRE(cpu.get_flag(CPU::FLAGS6502::OVERFLW) == false);
 }
 
@@ -344,20 +344,20 @@ TEST_CASE("ADC opcode sets negative flag", "[opcode][adc][immediate][negative]")
 
 	cpu.load_and_run(program);
 
-	REQUIRE(cpu.a == 0x81);
-	REQUIRE(cpu.get_flag(CPU::FLAGS6502::SIGN) == true);
+	REQUIRE(cpu.get_accumulator() == 0x81);
+	REQUIRE(cpu.get_flag(CPU::FLAGS6502::NEGATIVE) == true);
 	REQUIRE(cpu.get_flag(CPU::FLAGS6502::ZERO) == false);
 	REQUIRE(cpu.get_flag(CPU::FLAGS6502::CARRY) == false);
 	REQUIRE(cpu.get_flag(CPU::FLAGS6502::OVERFLW) == false);
 }
 
-TEST_CASE("ADC opcode sets overflow flag (signed overflow)", "[opcode][adc][immediate][overflow]")
+TEST_CASE("ADC opcode sets overflow flag (NEGATIVEed overflow)", "[opcode][adc][immediate][overflow]")
 {
 	Bus bus;
 	CPU cpu;
 	cpu.connect_bus(&bus);
 
-	// LDA #$50, ADC #$50, BRK (80 + 80 = 160, which is -96 in signed 8-bit)
+	// LDA #$50, ADC #$50, BRK (80 + 80 = 160, which is -96 in NEGATIVEed 8-bit)
 	std::vector<uint8_t> program = {
 		0xA9, 0x50, // LDA #$50
 		0x69, 0x50, // ADC #$50
@@ -366,9 +366,9 @@ TEST_CASE("ADC opcode sets overflow flag (signed overflow)", "[opcode][adc][imme
 
 	cpu.load_and_run(program);
 
-	REQUIRE(cpu.a == 0xA0);
+	REQUIRE(cpu.get_accumulator() == 0xA0);
 	REQUIRE(cpu.get_flag(CPU::FLAGS6502::OVERFLW) == true);
-	REQUIRE(cpu.get_flag(CPU::FLAGS6502::SIGN) == true); // 0xA0 has high bit set
+	REQUIRE(cpu.get_flag(CPU::FLAGS6502::NEGATIVE) == true); // 0xA0 has high bit set
 	REQUIRE(cpu.get_flag(CPU::FLAGS6502::CARRY) == false);
 	REQUIRE(cpu.get_flag(CPU::FLAGS6502::ZERO) == false);
 }
@@ -389,10 +389,10 @@ TEST_CASE("ADC opcode works with carry flag set", "[opcode][adc][immediate][carr
 
 	cpu.load_and_run(program);
 
-	REQUIRE(cpu.a == 0x02);
+	REQUIRE(cpu.get_accumulator() == 0x02);
 	REQUIRE(cpu.get_flag(CPU::FLAGS6502::CARRY) == false);
 	REQUIRE(cpu.get_flag(CPU::FLAGS6502::ZERO) == false);
-	REQUIRE(cpu.get_flag(CPU::FLAGS6502::SIGN) == false);
+	REQUIRE(cpu.get_flag(CPU::FLAGS6502::NEGATIVE) == false);
 	REQUIRE(cpu.get_flag(CPU::FLAGS6502::OVERFLW) == false);
 }
 
@@ -412,11 +412,132 @@ TEST_CASE("ADC opcode works with carry flag set before ADC", "[opcode][adc][imme
 
 	cpu.load_and_run(program);
 
-	REQUIRE(cpu.a == 0x03);
+	REQUIRE(cpu.get_accumulator() == 0x03);
 	REQUIRE(cpu.get_flag(CPU::FLAGS6502::CARRY) == false);
 	REQUIRE(cpu.get_flag(CPU::FLAGS6502::ZERO) == false);
-	REQUIRE(cpu.get_flag(CPU::FLAGS6502::SIGN) == false);
+	REQUIRE(cpu.get_flag(CPU::FLAGS6502::NEGATIVE) == false);
 	REQUIRE(cpu.get_flag(CPU::FLAGS6502::OVERFLW) == false);
+}
+
+/* SBC */
+TEST_CASE("SBC opcode works with immediate addressing (no borrow, no overflow)", "[opcode][sbc][immediate]")
+{
+	Bus bus;
+	CPU cpu;
+	cpu.connect_bus(&bus);
+
+	// LDA #$50, SEC, SBC #$20, BRK
+	std::vector<uint8_t> program = {
+		0xA9, 0x50, // LDA #$50
+		0x38,		// SEC (set carry, so no borrow)
+		0xE9, 0x20, // SBC #$20
+		0x00		// BRK
+	};
+
+	cpu.load_and_run(program);
+
+	REQUIRE(cpu.get_accumulator() == 0x30); // 0x50 - 0x20 = 0x30
+	REQUIRE(cpu.get_flag(CPU::FLAGS6502::CARRY) == true);
+	REQUIRE(cpu.get_flag(CPU::FLAGS6502::ZERO) == false);
+	REQUIRE(cpu.get_flag(CPU::FLAGS6502::NEGATIVE) == false);
+	REQUIRE(cpu.get_flag(CPU::FLAGS6502::OVERFLW) == false);
+}
+
+TEST_CASE("SBC opcode sets borrow (carry clear) and negative flag", "[opcode][sbc][immediate][borrow]")
+{
+	Bus bus;
+	CPU cpu;
+	cpu.connect_bus(&bus);
+
+	// LDA #$10, CLC, SBC #$20, BRK
+	std::vector<uint8_t> program = {
+		0xA9, 0x10, // LDA #$10
+		0x18,		// CLC (clear carry, so borrow)
+		0xE9, 0x20, // SBC #$20
+		0x00		// BRK
+	};
+
+	cpu.load_and_run(program);
+
+	REQUIRE(cpu.get_accumulator() == 0xEF); // 0x10 - 0x20 - 1 = 0xEF (underflow, wraps around)
+	REQUIRE(cpu.get_flag(CPU::FLAGS6502::CARRY) == false);
+	REQUIRE(cpu.get_flag(CPU::FLAGS6502::NEGATIVE) == true);
+	REQUIRE(cpu.get_flag(CPU::FLAGS6502::ZERO) == false);
+	REQUIRE(cpu.get_flag(CPU::FLAGS6502::OVERFLW) == false);
+}
+
+TEST_CASE("SBC opcode sets zero flag", "[opcode][sbc][immediate][zero]")
+{
+	Bus bus;
+	CPU cpu;
+	cpu.connect_bus(&bus);
+
+	// LDA #$01, SEC, SBC #$01, BRK
+	std::vector<uint8_t> program = {
+		0xA9, 0x01, // LDA #$01
+		0x38,		// SEC
+		0xE9, 0x01, // SBC #$01
+		0x00		// BRK
+	};
+
+	cpu.load_and_run(program);
+
+	REQUIRE(cpu.get_accumulator() == 0x00);
+	REQUIRE(cpu.get_flag(CPU::FLAGS6502::ZERO) == true);
+	REQUIRE(cpu.get_flag(CPU::FLAGS6502::CARRY) == true);
+	REQUIRE(cpu.get_flag(CPU::FLAGS6502::NEGATIVE) == false);
+	REQUIRE(cpu.get_flag(CPU::FLAGS6502::OVERFLW) == false);
+}
+
+TEST_CASE("SBC opcode sets overflow flag (signed overflow)", "[opcode][sbc][immediate][overflow]")
+{
+	Bus bus;
+	CPU cpu;
+	cpu.connect_bus(&bus);
+
+	// LDA #$80, SEC, SBC #$01, BRK (signed: -128 - 1 = 127, overflow)
+	std::vector<uint8_t> program = {
+		0xA9, 0x80, // LDA #$80
+		0x38,		// SEC
+		0xE9, 0x01, // SBC #$01
+		0x00		// BRK
+	};
+
+	cpu.load_and_run(program);
+
+	REQUIRE(cpu.get_accumulator() == 0x7F);
+	REQUIRE(cpu.get_flag(CPU::FLAGS6502::OVERFLW) == true);
+	REQUIRE(cpu.get_flag(CPU::FLAGS6502::NEGATIVE) == false);
+	REQUIRE(cpu.get_flag(CPU::FLAGS6502::ZERO) == false);
+	REQUIRE(cpu.get_flag(CPU::FLAGS6502::CARRY) == true);
+}
+
+/* One test for each: LDX, LDY, LDA, STA, STX, STY */
+TEST_CASE("LDX, LDY, LDA, STA, STX, STY opcodes basic functionality", "[opcode][loadstore]")
+{
+	Bus bus;
+	CPU cpu;
+	cpu.connect_bus(&bus);
+
+	// LDX #$22, LDY #$33, LDA #$44, STA $10, STX $11, STY $12, BRK
+	std::vector<uint8_t> program = {
+		0xA2, 0x22, // LDX #$22
+		0xA0, 0x33, // LDY #$33
+		0xA9, 0x44, // LDA #$44
+		0x85, 0x10, // STA $10
+		0x86, 0x11, // STX $11
+		0x84, 0x12, // STY $12
+		0x00		// BRK
+	};
+
+	cpu.load_and_run(program);
+
+	REQUIRE(cpu.get_x() == 0x22);
+	REQUIRE(cpu.get_y() == 0x33);
+	REQUIRE(cpu.get_accumulator() == 0x44);
+	REQUIRE(bus.read(0x10) == 0x44);
+	REQUIRE(bus.read(0x11) == 0x22);
+	REQUIRE(bus.read(0x12) == 0x33);
 }
 
 /* INVALID */

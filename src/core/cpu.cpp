@@ -22,6 +22,14 @@ CPU::~CPU()
 {
 }
 
+/* Getter methods */
+uint8_t CPU::get_accumulator() const { return a; }
+uint8_t CPU::get_x() const { return x; }
+uint8_t CPU::get_y() const { return y; }
+uint16_t CPU::get_pc() const { return pc; }
+uint8_t CPU::get_sp() const { return sp; }
+uint8_t CPU::get_status() const { return status; }
+
 /* Memory access */
 uint8_t CPU::read(uint16_t address) const
 {
@@ -140,7 +148,7 @@ void CPU::set_flag(FLAGS6502 flag, bool set)
 
 void CPU::set_negative_flag(uint8_t value)
 {
-	set_flag(FLAGS6502::SIGN, (value & 0x80) != 0);
+	set_flag(FLAGS6502::NEGATIVE, (value & 0x80) != 0);
 }
 
 void CPU::set_zero_flag(uint8_t value)
@@ -151,6 +159,19 @@ void CPU::set_zero_flag(uint8_t value)
 void CPU::set_accumulator(uint8_t value)
 {
 	a = value;
+	set_negative_flag(value);
+	set_zero_flag(value);
+}
+
+void CPU::set_x(uint8_t value)
+{
+	x = value;
+	set_negative_flag(value);
+	set_zero_flag(value);
+}
+void CPU::set_y(uint8_t value)
+{
+	y = value;
 	set_negative_flag(value);
 	set_zero_flag(value);
 }
@@ -175,18 +196,14 @@ void CPU::ldx(AddressingMode mode)
 {
 	uint16_t addr = get_operand_address(mode);
 	uint8_t value = read(addr);
-	x = value;
-	set_negative_flag(value);
-	set_zero_flag(value);
+	set_x(value);
 }
 
 void CPU::ldy(AddressingMode mode)
 {
 	uint16_t addr = get_operand_address(mode);
 	uint8_t value = read(addr);
-	y = value;
-	set_negative_flag(value);
-	set_zero_flag(value);
+	set_y(value);
 }
 void CPU::adc(AddressingMode mode)
 {
@@ -195,10 +212,27 @@ void CPU::adc(AddressingMode mode)
 
 	uint16_t sum = static_cast<uint16_t>(a) + static_cast<uint16_t>(value) + get_carry_flag();
 	uint8_t result = static_cast<uint8_t>(sum);
-	bool overflow = (~(a ^ value) & (a ^ result) & 0x80) != 0;
-	set_accumulator(result);
 
+	bool overflow = (~(a ^ value) & (a ^ result) & 0x80) != 0;
+
+	set_accumulator(result);
 	set_flag(FLAGS6502::CARRY, sum > 0xFF);
+	set_flag(FLAGS6502::OVERFLW, overflow);
+}
+
+void CPU::sbc(AddressingMode mode)
+{
+	uint16_t addr = get_operand_address(mode);
+	uint8_t value = read(addr);
+
+	uint16_t sum = static_cast<uint16_t>(a) - static_cast<uint16_t>(value) - (1 - get_carry_flag());
+	uint8_t result = static_cast<uint8_t>(sum);
+
+	bool carryFlag = (a >= (value + (1 - get_carry_flag())));
+	bool overflow = ((a ^ result) & (a ^ value) & 0x80) != 0;
+
+	set_accumulator(result);
+	set_flag(FLAGS6502::CARRY, carryFlag);
 	set_flag(FLAGS6502::OVERFLW, overflow);
 }
 
@@ -212,7 +246,93 @@ void CPU::sec(AddressingMode mode)
 	set_flag(FLAGS6502::CARRY, true);
 }
 
-void CPU::sbc(AddressingMode mode) {}
+void CPU::inc(AddressingMode mode)
+{
+	uint16_t addr = get_operand_address(mode);
+	uint8_t value = read(addr);
+
+	value++;
+	write(addr, value);
+	set_negative_flag(value);
+	set_zero_flag(value);
+}
+
+void CPU::inx(AddressingMode mode)
+{
+	set_x(x + 1);
+}
+
+void CPU::iny(AddressingMode mode)
+{
+	set_y(y + 1);
+}
+
+void CPU::dec(AddressingMode mode)
+{
+	uint16_t addr = get_operand_address(mode);
+	uint8_t value = read(addr);
+
+	value--;
+	write(addr, value);
+	set_negative_flag(value);
+	set_zero_flag(value);
+}
+void CPU::dex(AddressingMode mode)
+{
+	set_x(x - 1);
+}
+void CPU::dey(AddressingMode mode)
+{
+	set_y(y - 1);
+}
+
+void CPU::stx(AddressingMode mode)
+{
+	uint16_t addr = get_operand_address(mode);
+	write(addr, x);
+}
+
+void CPU::sty(AddressingMode mode)
+{
+	uint16_t addr = get_operand_address(mode);
+	write(addr, y);
+}
+
+void CPU::sta(AddressingMode mode)
+{
+	uint16_t addr = get_operand_address(mode);
+	write(addr, a);
+}
+
+void CPU::tax(AddressingMode mode)
+{
+	set_x(a);
+}
+
+void CPU::txa(AddressingMode mode)
+{
+	set_accumulator(x);
+}
+
+void CPU::tay(AddressingMode mode)
+{
+	set_y(a);
+}
+
+void CPU::tya(AddressingMode mode)
+{
+	set_accumulator(y);
+}
+void CPU::tsx(AddressingMode mode)
+{
+	set_x(sp);
+}
+
+void CPU::txs(AddressingMode mode)
+{
+	sp = x;
+}
+
 void CPU::asl(AddressingMode mode) {}
 void CPU::lsr(AddressingMode mode) {}
 void CPU::rol(AddressingMode mode) {}
@@ -223,12 +343,6 @@ void CPU::bit(AddressingMode mode) {}
 void CPU::cmp(AddressingMode mode) {}
 void CPU::cpx(AddressingMode mode) {}
 void CPU::cpy(AddressingMode mode) {}
-void CPU::inc(AddressingMode mode) {}
-void CPU::inx(AddressingMode mode) {}
-void CPU::iny(AddressingMode mode) {}
-void CPU::dec(AddressingMode mode) {}
-void CPU::dex(AddressingMode mode) {}
-void CPU::dey(AddressingMode mode) {}
 void CPU::jmp(AddressingMode mode) {}
 void CPU::jsr(AddressingMode mode) {}
 void CPU::rts(AddressingMode mode) {}
@@ -246,19 +360,10 @@ void CPU::sed(AddressingMode mode) {}
 void CPU::cli(AddressingMode mode) {}
 void CPU::sei(AddressingMode mode) {}
 void CPU::clv(AddressingMode mode) {}
-void CPU::tax(AddressingMode mode) {}
-void CPU::txa(AddressingMode mode) {}
-void CPU::tay(AddressingMode mode) {}
-void CPU::tya(AddressingMode mode) {}
-void CPU::tsx(AddressingMode mode) {}
-void CPU::txs(AddressingMode mode) {}
 void CPU::pha(AddressingMode mode) {}
 void CPU::pla(AddressingMode mode) {}
 void CPU::php(AddressingMode mode) {}
 void CPU::plp(AddressingMode mode) {}
-void CPU::sta(AddressingMode mode) {}
-void CPU::stx(AddressingMode mode) {}
-void CPU::sty(AddressingMode mode) {}
 
 void CPU::run()
 {

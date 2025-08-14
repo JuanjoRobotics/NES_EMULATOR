@@ -55,7 +55,3 @@ make
 - [ ] Controller input
 - [ ] Save states
 - [ ] ROM loading
-
-## License
-
-MIT License

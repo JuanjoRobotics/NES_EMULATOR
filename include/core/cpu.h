@@ -87,15 +87,8 @@ public:
 		BREAK = (1 << 4),
 		UNUSED = (1 << 5),
 		OVERFLW = (1 << 6),
-		SIGN = (1 << 7)
+		NEGATIVE = (1 << 7)
 	};
-
-	uint8_t a = 0x00;	   // Accumulator
-	uint8_t x = 0x00;	   // X Register
-	uint8_t y = 0x00;	   // Y Register
-	uint16_t pc = 0x0000;  // Program Counter
-	uint8_t sp = 0x00;	   // Stack Pointer
-	uint8_t status = 0x00; // Status Register
 
 	Bus *bus = nullptr;
 	uint8_t read(uint16_t address) const;
@@ -110,9 +103,28 @@ public:
 	uint16_t get_operand_address(AddressingMode mode) const;
 
 	void set_accumulator(uint8_t value);
+	void set_x(uint8_t value);
+	void set_y(uint8_t value);
+
 	void set_zero_flag(uint8_t value);
 	void set_negative_flag(uint8_t value);
-	void set_carry_flag();
+
 	uint8_t get_carry_flag() const;
+	void set_carry_flag();
 	void clear_carry_flag();
+
+	uint8_t get_accumulator() const;
+	uint8_t get_x() const;
+	uint8_t get_y() const;
+	uint16_t get_pc() const;
+	uint8_t get_sp() const;
+	uint8_t get_status() const;
+
+private:
+	uint8_t a = 0x00;	   // Accumulator
+	uint8_t x = 0x00;	   // X Register
+	uint8_t y = 0x00;	   // Y Register
+	uint16_t pc = 0x0000;  // Program Counter
+	uint8_t sp = 0x00;	   // Stack Pointer
+	uint8_t status = 0x00; // Status Register
 };
